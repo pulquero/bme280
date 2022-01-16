@@ -87,24 +87,24 @@ def test_sample_without_params():
 
 
 def test_uncompensated_readings_repr():
-    block = [1, 1, 2, 3, 5, 8, 13, 21]
+    block = [1, 1, 2, 3, 5, 8, 13, 21, 0, 0, 0, 0]
     reading = bme280.uncompensated_readings(block)
-    assert repr(reading) == "uncompensated_reading(temp=0x00003050, pressure=0x00001010, humidity=0x00000D15, block=01:01:02:03:05:08:0D:15)"
+    assert repr(reading) == "uncompensated_reading(temp=0x00003050, pressure=0x00001010, humidity=0x00000D15, sensorid=0x00000000, block=01:01:02:03:05:08:0D:15:00:00:00:00)"
 
 
 def test_compensated_readings_repr():
-    block = [1, 1, 2, 3, 5, 8, 13, 21]
+    block = [1, 1, 2, 3, 5, 8, 13, 21, 0, 0, 0, 0]
     raw = bme280.uncompensated_readings(block)
     reading = bme280.compensated_readings(raw, compensation_params)
     reading.id = "55fea298-5a5d-4873-a46d-b631c8748100"
     reading.timestamp = datetime(2018, 3, 18, 19, 26, 14, 206233, tzinfo=pytz.UTC)
-    assert repr(reading) == "compensated_reading(id=55fea298-5a5d-4873-a46d-b631c8748100, timestamp=2018-03-18 19:26:14.206233UTC, temp=0.003 °C, pressure=8758647.58 hPa, humidity=0.05 % rH)"
+    assert repr(reading) == "compensated_reading(sensorid=0x00000000, id=55fea298-5a5d-4873-a46d-b631c8748100, timestamp=2018-03-18 19:26:14.206233UTC, temp=0.003 °C, pressure=8758647.58 hPa, humidity=0.05 % rH)"
 
 
 def test_compensated_readings_repr_zero_millis():
-    block = [1, 1, 2, 3, 5, 8, 13, 21]
+    block = [1, 1, 2, 3, 5, 8, 13, 21, 0, 0, 0, 0]
     raw = bme280.uncompensated_readings(block)
     reading = bme280.compensated_readings(raw, compensation_params)
     reading.id = "55fea298-5a5d-4873-a46d-b631c8748100"
     reading.timestamp = datetime(2018, 3, 18, 19, 26, 14, tzinfo=pytz.UTC)
-    assert repr(reading) == "compensated_reading(id=55fea298-5a5d-4873-a46d-b631c8748100, timestamp=2018-03-18 19:26:14.000000UTC, temp=0.003 °C, pressure=8758647.58 hPa, humidity=0.05 % rH)"
+    assert repr(reading) == "compensated_reading(sensorid=0x00000000, id=55fea298-5a5d-4873-a46d-b631c8748100, timestamp=2018-03-18 19:26:14.000000UTC, temp=0.003 °C, pressure=8758647.58 hPa, humidity=0.05 % rH)"
