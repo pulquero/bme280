@@ -41,7 +41,7 @@ setup(
     install_requires=["pytz", "smbus2"],
     setup_requires=pytest_runner,
     tests_require=test_deps,
-    python_requires=">=3.6, <4",
+    python_requires=">=3.8, <4",
     extras_require={
         'docs': [
             'sphinx>=1.5.1'
@@ -60,8 +60,6 @@ setup(
         "Topic :: Education",
         "Topic :: System :: Hardware",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10"
