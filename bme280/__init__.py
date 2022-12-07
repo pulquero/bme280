@@ -79,11 +79,12 @@ class compensated_readings(object):
         self.id = uuid.uuid4()
         self.uncompensated = raw_readings
         self.timestamp = datetime.datetime.now(datetime.timezone.utc)
-        self.temperature = self.__tfine(raw_readings.temperature) / 5120.0
+        t_fine = self.__tfine(raw_readings.temperature)
+        self.temperature = t_fine / 5120.0
         self.humidity = self.__calc_humidity(raw_readings.humidity,
-                                             raw_readings.temperature)
+                                             t_fine)
         self.pressure = self.__calc_pressure(raw_readings.pressure,
-                                             raw_readings.temperature) / 100.0
+                                             t_fine) / 100.0
         self.sensorid = raw_readings.sensorid
 
     def __tfine(self, t):
@@ -91,14 +92,14 @@ class compensated_readings(object):
         v2 = ((t / 131072.0 - self._comp.dig_T1 / 8192.0) ** 2) * self._comp.dig_T3
         return v1 + v2
 
-    def __calc_humidity(self, h, t):
-        res = self.__tfine(t) - 76800.0
+    def __calc_humidity(self, h, t_fine):
+        res = t_fine - 76800.0
         res = (h - (self._comp.dig_H4 * 64.0 + self._comp.dig_H5 / 16384.0 * res)) * (self._comp.dig_H2 / 65536.0 * (1.0 + self._comp.dig_H6 / 67108864.0 * res * (1.0 + self._comp.dig_H3 / 67108864.0 * res)))
         res = res * (1.0 - (self._comp.dig_H1 * res / 524288.0))
         return max(0.0, min(res, 100.0))
 
-    def __calc_pressure(self, p, t):
-        v1 = self.__tfine(t) / 2.0 - 64000.0
+    def __calc_pressure(self, p, t_fine):
+        v1 = t_fine / 2.0 - 64000.0
         v2 = v1 * v1 * self._comp.dig_P6 / 32768.0
         v2 = v2 + v1 * self._comp.dig_P5 * 2.0
         v2 = v2 / 4.0 + self._comp.dig_P4 * 65536.0
